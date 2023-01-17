@@ -47,5 +47,7 @@ def get_neural_unit(pos_final, neg_final, zero_final, T_BIN, n):
     pickle.dump([zero_unit, zero_err, ci_Z, zero_trials], f)
     f.close()
 
+    return pos_unit, neg_unit, zero_unit
+
 
 

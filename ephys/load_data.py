@@ -23,7 +23,7 @@ def load_eid(reg, side, n):
     probe = probes[n]
     print(eid)
 
-    return eid, probe
+    return eid, probe, len(eids)
 
 def obtain_wheel(eid, probe, side):
     trials = TrialData(eid)

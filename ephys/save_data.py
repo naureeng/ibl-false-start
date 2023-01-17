@@ -60,3 +60,19 @@ def plot_unit(n, alignment_type, pos_color, neg_color, zero_color):
 
     print(f"saved plot for unit #{n}")
 
+def plot_psth(reg, side):
+    f = open('neural.data', 'rb')
+    st_mat, fs_mat, ze_mat = pickle.load(f)
+    f.close()
+
+    svfg = plt.figure(figsize=(10,8))
+    plt.subplot(1,3,1); plt.imshow(st_mat, cmap="bwr"); plt.clim([-3,3]); plt.axis("off"); plt.axvline(x=50, c="k", ls="--")
+    plt.title("stimulus-triggered", fontsize=14, fontweight="bold")
+    plt.subplot(1,3,2); plt.imshow(fs_mat, cmap="bwr"); plt.clim([-3,3]); plt.axis("off"); plt.axvline(x=50, c="k", ls="--") 
+    plt.title("false-starts", fontsize=14, fontweight="bold")
+    plt.subplot(1,3,3); plt.imshow(ze_mat, cmap="bwr"); plt.clim([-3,3]); plt.axis("off"); plt.axvline(x=50, c="k", ls="--") 
+    plt.title("zero-contrast", fontsize=14, fontweight="bold")
+    svfg.savefig(f"psth_{reg}_{side}.png", bbox_inches="tight")
+
+    print("saved psth")
+
