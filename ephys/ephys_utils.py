@@ -130,14 +130,16 @@ def pair_firing_rate_contrast(eid, probe, d, reg, time_lower, time_upper, T_BIN,
 
     return Res, noisy_idx
 
-def remove_noisy_units(pos_data, noisy_pos, neg_data, noisy_neg):
-    if len(noisy_pos) != 0 or len(noisy_neg) != 0:
-        noisy_idx = np.concatenate((noisy_pos, noisy_neg), axis=0)
+def remove_noisy_units(pos_data, noisy_pos, neg_data, noisy_neg, zero_data, noisy_zero):
+    if len(noisy_pos) != 0 or len(noisy_neg) != 0 or len(noisy_zero) != 0:
+        noisy_idx = np.concatenate((noisy_pos, noisy_neg, noisy_zero), axis=0)
         noisy_units = [int(x) for x in np.unique(noisy_idx)]
         pos_final = np.delete(pos_data, noisy_units, axis=0)
         neg_final = np.delete(neg_data, noisy_units, axis=0)
+        zero_final = np.delete(zero_data, noisy_units, axis=0)
     else:
         pos_final = pos_data
         neg_final = neg_data
+        zero_final = zero_data
 
-    return pos_final, neg_final
+    return pos_final, neg_final, zero_final
