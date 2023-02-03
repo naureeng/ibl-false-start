@@ -4,9 +4,16 @@ author: naureen ghani
 
 """
 import sys
+import os
 import numpy as np
 sys.path.append('/nfs/nhome/live/naureeng/int-brain-lab/ibl-false-start/ephys')
 from RT_dist_plot import *
+
+def compute_N_mice(eids):
+    ## compute N = #mice from #sessions
+    mouse_names = [str(one.eid2path(eid)).split(os.sep)[10] for eid in eids]
+    N_mice = len(np.unique(mouse_names))
+    return N_mice
 
 def running_avg(window, y):
     ## running average rwd
