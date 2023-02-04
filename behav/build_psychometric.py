@@ -17,16 +17,17 @@ eids = np.load("eid-behav-qc.npy")
 print(len(eids), "sessions")
 
 ## [2] process data
-data = build_pyschometric_dict(eids, "negRT")
+data = build_pyschometric_dict(eids, "posRT")
 ## store pickle
 f = open('data.psycho', 'wb')
 pickle.dump(data, f)
 f.close()
 print("data pickled")
-
 """
 
 ## [3] save data
-f = open("data.psycho", "rb")
+f = open("posRT.psycho", "rb")
 data = pickle.load(f)
-plot_dict(data, "negRT")
+plot_dict(data, "posRT")
+
+

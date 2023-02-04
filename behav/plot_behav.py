@@ -7,7 +7,11 @@ author: naureen ghani
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from scipy import stats
+from statsmodels.formula.api import ols
+import statsmodels.api as sm
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 from process_behav import *
 sys.path.append('/nfs/nhome/live/naureeng/int-brain-lab/ibl-false-start/ephys')
 from plot_utils import *
@@ -62,6 +66,7 @@ def plot_data(xdata, data_fracR, data_total, ldata, cdata):
 
     data_block = sum(data_fracR) / sum(data_total)
     data_eid = [i / (j+0.0001) for i, j in zip(data_fracR, data_total)]
+    print(len(data_eid))
     std_block = np.std(data_eid, axis=0)
     sem_block = stats.sem(data_eid, axis=0)
     ci_95 = 1.96*sem_block
@@ -70,7 +75,9 @@ def plot_data(xdata, data_fracR, data_total, ldata, cdata):
     plt.scatter(xdata, data_block, 100, c=cdata)
 
     ## 95 % confidence intervals
-    plt.errorbar(xdata, data_block, yerr=ci_95, fmt="o", c=cdata, elinewidth=3 )
+    plt.errorbar(xdata, data_block, yerr=ci_95*10, fmt="o", c=cdata, elinewidth=3 )
+
+    return list(data_block)
 
 
 def plot_dict(data, name):
@@ -84,9 +91,17 @@ def plot_dict(data, name):
     ## [2] process data
     contrastTypes = [-1.0, -0.25, -0.125, -0.0625, -0.0, 0.0, 0.0625, 0.125, 0.25, 1.0]
 
-    plot_data(contrastTypes, data["80_fracR"], data["80_total"], "left block", "#3e2f5b" )
-    plot_data(contrastTypes, data["20_fracR"], data["20_total"], "right block", "#f28500" )
-    plot_data(contrastTypes, data["50_fracR"], data["50_total"], "unbiased block", "dimgrey" )
+    data_80 = plot_data(contrastTypes, data["80_fracR"], data["80_total"], "left block", "#3e2f5b" )
+    data_20 = plot_data(contrastTypes, data["20_fracR"], data["20_total"], "right block", "#f28500" )
+    data_50 = plot_data(contrastTypes, data["50_fracR"], data["50_total"], "unbiased block", "dimgrey" )
+
+    ## [3] statistical analysis
+    x = np.concatenate( (data_80,data_20,data_50), axis=0)
+    df = pd.DataFrame({'fracR': x, 'block': np.repeat(['80', '20', '50'], repeats=10), 'contrast': np.tile(contrastTypes, reps=3)})
+    model = ols('fracR ~ C(contrast) + C(block) + C(contrast):C(block)', data=df).fit()
+    print(sm.stats.anova_lm(model, typ=2))
+    tukey = pairwise_tukeyhsd(endog=df['fracR'], groups=df['block'], alpha=0.05)
+    print(tukey)
 
     ## plot labels
     sns.despine(trim=True, offset=4)
