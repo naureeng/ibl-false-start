@@ -181,4 +181,4 @@ def compute_RTs(eid):
         goCueRTs.append(wheel.first_movement_onset_times[rtidx] - trials.goCue_times[rtidx])
         stimOnRTs.append(wheel.first_movement_onset_times[rtidx] - trials.stimOn_times[rtidx])
 
-    return goCueRTs, stimOnRTs, durations
+    return goCueRTs, stimOnRTs, durations, wheel
