@@ -13,7 +13,8 @@ def compute_N_mice(eids):
     ## compute N = #mice from #sessions
     mouse_names = [str(one.eid2path(eid)).split(os.sep)[10] for eid in eids]
     N_mice = len(np.unique(mouse_names))
-    return N_mice
+    subject_names = np.unique(mouse_names)
+    return N_mice, mouse_names
 
 def running_avg(window, y):
     ## running average rwd
@@ -64,11 +65,14 @@ def build_pyschometric_dict(eids, RT_type):
     data_80fracR = []; data_20fracR = []; data_50fracR = []
     data_80total = []; data_20total = []; data_50total = []
 
-    for i in range(10):
+    for i in range(len(eids)):
         eid = eids[i]
         print(eid)
-        trials = TrialData(eid)
-        wheel = WheelData(eid)
+        try:
+            trials = TrialData(eid)
+            wheel = WheelData(eid)
+        except:
+            continue
         wheel.calc_trialwise_wheel(trials.stimOn_times, trials.feedback_times)
         wheel.calc_movement_onset_times(trials.stimOn_times)
 
